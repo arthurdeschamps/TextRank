@@ -52,7 +52,7 @@ class TextRank:
             # print(f"{ind}: {node['score']}")
 
     def _init_nodes_scores(self):
-        uniform_distr = np.full(shape=(len(self.graph.nodes),), fill_value=1/len(self.graph.nodes))
+        uniform_distr = np.full(shape=(self.graph.number_of_nodes(),), fill_value=1/len(self.graph.nodes))
         i = 0
         for _, node in self.graph.nodes(data=True):
             node['score'] = uniform_distr[i]
