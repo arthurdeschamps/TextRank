@@ -5,16 +5,21 @@ import networkx as nx
 
 class TextRank:
 
-    def __init__(self, graph: nx.DiGraph, damping_factor: float):
+    def __init__(self, graph: nx.DiGraph or nx.Graph, damping_factor: float = 0.85):
         super(TextRank, self).__init__()
         self.graph = graph
         self.damping_factor = damping_factor
         self.directed = graph.is_directed()
+        self.scores: List[float] = []
         assert nx.is_weighted(graph)
 
     def run(self, delta_tol=1e-6) -> List[float]:
         self._init_nodes_scores()
         return self._run(0, delta_tol)
+
+    def best_nodes(self, limit=10):
+        assert len(self.scores) > 0
+        return sorted(self.scores, key=lambda t: t[1], reverse=True)[:limit]
 
     def _run(self, it, tol):
         d_comp = 1.0 - self.damping_factor
@@ -30,7 +35,8 @@ class TextRank:
         delta = self._compute_delta()
         if delta < tol:
             self.nb_iterations = it + 1
-            return list(node['score'] for _, node in self.graph.nodes(data=True))
+            self.scores = list((node, data['score']) for node, data in self.graph.nodes(data=True))
+            return self.scores
         self._update_previous_scores()
         return self._run(it+1, tol)
 

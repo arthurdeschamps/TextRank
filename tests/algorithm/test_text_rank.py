@@ -15,7 +15,7 @@ def test_unweighted_directed_page_rank():
 
 
 def test_unweighted_undirected_page_rank():
-    graph = nx.DiGraph()
+    graph = nx.Graph()
     graph.add_nodes_from([1, 2, 3, 4])
     for i in range(4):
         for j in range(4):
