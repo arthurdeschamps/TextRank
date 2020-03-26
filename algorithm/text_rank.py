@@ -1,9 +1,12 @@
-from typing import List
+from typing import List, Tuple
 import numpy as np
 import networkx as nx
 
 
 class TextRank:
+    """
+    Implementation of the TextRank algorithm.
+    """
 
     def __init__(self, graph: nx.DiGraph or nx.Graph, damping_factor: float = 0.85):
         super(TextRank, self).__init__()
@@ -13,11 +16,20 @@ class TextRank:
         self.scores: List[float] = []
         assert nx.is_weighted(graph)
 
-    def run(self, delta_tol=1e-6) -> List[float]:
+    def run(self, delta_tol=1e-6) -> List[Tuple[any, float]]:
+        """
+        Runs the TextRank algorithm on the current graph.
+        :param delta_tol: Convergence criterion (||x_t - x_(t-1)||_1 < delta)
+        :return: A list containing all the (node, node_score) pairs.
+        """
         self._init_nodes_scores()
         return self._run(0, delta_tol)
 
     def best_nodes(self, limit=10):
+        """
+        :param limit: Maximum number of  pairs to retrieve.
+        :return: The best (node, node_score) pairs.
+        """
         assert len(self.scores) > 0
         return sorted(self.scores, key=lambda t: t[1], reverse=True)[:limit]
 

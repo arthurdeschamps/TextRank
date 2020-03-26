@@ -6,6 +6,9 @@ from utils import collapse_adjacent_keyphrases
 
 
 class KeyphraseExtractor:
+    """
+    Extracts key phrases from any text sources.
+    """
 
     def __init__(self, text, n=1, syntactic_filters=('NOUN', 'ADJ')):
         super(KeyphraseExtractor, self).__init__()
@@ -13,6 +16,11 @@ class KeyphraseExtractor:
         self.graph = build_graph_n_grams(text, n=n, syntactic_filters=syntactic_filters)
 
     def extract_keyphrases(self, nb_keyphrases=None):
+        """
+        :param nb_keyphrases: Number of key-phrases to extract from the text. If None, then 1/3 of the graph nodes
+        will be used as key-phrases (before post-processing collapsing).
+        :return:
+        """
         nb_nodes = self.graph.number_of_nodes()
         if not nb_keyphrases:
             nb_keyphrases = int(nb_nodes/3)

@@ -22,6 +22,88 @@ terms in a set of documents. It is a good baseline to compare to other methods, 
 We enhanced the base algorithm by adding key-phrases concatenation whenever they are adjacent in the text and syntactic
 filtering use POS tagging.
 
+## Implementation (Pseudo-code)
+### Pre-processing
+This step is common to both algorithms. It filters out types of word (verb, determiner, etc) that the user doesn't deem 
+relevant or useful and creates all possible n-grams, were n goes from 1 to the number set by the user.
+```python
+# Inputs: 
+# docs: Set of textual documents
+# n: n-grams parameter
+#
+# Output: All possible n-grams up to n from the filtered documents.
+tagged_docs := pos_tagging(docs)
+filtered_docs := filter_by_tag(docs, syntactic_filters)
+return construct_n_grams(filtered_docs, n=i) for i in 1..n  # e.g. for n=3, (I, am, tall) -> (I, am, tall, I am, am tall, I am tall)
+```
+### TextRank
+```python
+# Inputs:
+# document_ids: Identifiers of all documents
+# grams: The grams for each document computed in the pre-processing step
+# window_size: Size of the windows of words to calculate co-occurrences
+# tol: Convergence criterion.
+# k: Maximum number of grams to use for the final key phrases.
+#
+# Output: The best k (i.e. most relevant) grams for each document
+gram_scores = {}
+for doc_id in document_ids:
+    document_grams = grams[doc_id]
+    g = Graph()
+    g.nodes = document_grams
+    g.edges = (g1, g2), for all g1,g2 in document_grams such that they lie in the same window of size window_size
+    node_scores[0] = (1/#nodes)_i for i in 1..#nodes
+    t = 1
+    do:
+        nodes_scores[t] = text_rank_iteration(nodes_scores[t-1])  # As described in the original TextRank paper
+    while l1_norm(nodes_scores[t] - nodes_scores[t-1]) > tol
+    best_scores = sort_descending(nodes_scores[:k])
+    gram_scores[doc_id] = { node such that score(node) is in best_scores }
+return gram_scores
+```
+
+### TF-IDF
+````python
+# Inputs:
+# document_ids: Identifiers of all documents
+# k: Maximum number of grams to use for the final key phrases.
+#
+# Output: The best k (i.e. most relevant) grams for each document
+term_frequencies := nb of occurrences of each word in each document
+term_appearances := nb of documents each word appears in
+top_k_terms_per_doc = {}
+for doc_id in document_ids:
+    terms = grams[doc_id]
+    scores = term_frequencies[doc_id][term] * log(#documents / term_appearances[term]) for each term in terms
+    top_scores = sort_descending(scores)[:k]
+    top_k_terms_per_doc[doc_id] = { term,  where score(term) is in top_scores }
+return top_k_terms_per_doc
+````
+### Post-processing
+This step is common to both algorithms. It uses the collected terms to create larger key phrases if the terms were adjacent
+in the original document.
+```python 
+# Inputs:
+# document_ids: Identifiers of all documents
+# terms: Top k terms/grams per document
+#
+# Output: Most relevant key phrases for each document.
+key_phrases
+for doc_id in document_ids:
+    stack = terms[doc_id]
+    key_phrases[doc_id] = List()
+    while not stack.is_empty():
+        term = stack.pop_first_element()
+        old_stack_size = size(stack)
+        for other_term in stack:
+            if term + " " + other_term is in document:
+                stack.push(concat(term, " ", other_term))
+            if other_term + " " + term is in document:
+                stack.push(concat(other_term, " ", term))
+        if size(stack) == old_stack_size:
+            key_phrases[doc_id].add(term) 
+return key_phrases 
+```
 ## Set-up
 The following parameters can be tuned:
 - n: maximum length of the grams (1-grams, ..., n-grams) we will use as nodes of the graph.

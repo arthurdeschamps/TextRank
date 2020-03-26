@@ -31,6 +31,10 @@ class TFIDF:
                 self.term_appearances[word].add(doc_id)
 
     def get_keyphrases(self, top_k=3) -> List[List[Tuple[str, float]]]:
+        """
+        :param top_k: How many words to use from the text to construct key-phrases.
+        :return: Lists of key phrases along with their scores for each document in the document set.
+        """
         top_keyphrases_per_document = []
         for doc_id, document in self.documents_with_ids:
             scores = []

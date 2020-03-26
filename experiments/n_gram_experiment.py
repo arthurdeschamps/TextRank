@@ -3,6 +3,13 @@ from utils import get_dataset, f1_macro, mean_reciprocal_rank
 
 
 def run_exp(ds, n, nb_keyphrases, syntactic_filters):
+    """
+    Runs TextRank on the given dataset.
+    :param ds: A list of (abstract, gold keyphrases).
+    :param n: n-grams parameter
+    :param nb_keyphrases: Number of keyphrases to generate for each prediction.
+    :param syntactic_filters: Filers out words that are not of these categories.
+    """
     print(f"Parameters: n -> {n} - Keyphrases/prediction -> {nb_keyphrases} - Syntactic filters -> {syntactic_filters}")
     f1_avg = 0.0
     mrr_avg = 0.0

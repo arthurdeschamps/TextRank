@@ -7,12 +7,12 @@ from utils import visualize_graph, apply_syntactic_filters
 def build_graph_n_grams(from_text: str, syntactic_filters=('NOUN', 'ADJ'), n=2, window_size=2):
     """
 
-    :param window_size:
-    :param from_text:
+    :param window_size: Window size for co-occurrences detection.
+    :param from_text: a text to build the graph from.
     :param syntactic_filters: One or many of ADJ, ADP, ADV, CONJ, DET, NOUN, NUM, PRT, PRON,
     VERB, ., X
-    :param n:
-    :return:
+    :param n: All grams until n-grams will be used as nodes of the graph.
+    :return: a usable graph where nodes are n-grams and edges or co-occurrences relationships between these grams.
     """
     tokens = nltk.word_tokenize(from_text)
     pos_tags = pos_tag(tokens)
