@@ -38,15 +38,17 @@ We used 2 different metrics to evaluate the models:
 
 The same results were achieved using different configurations, so we will only list the most computationally efficient versions of them:
 
+
 | n | k | Synt. filters | F1-macro | MRR |
-| :____: | :____: | :____: | :_____: |
+| :------: | :-----: | :------: | :-----: | :------: |
 | 1 | 3 | Noun/Adj | 0.065 | 0.163 |
 | 1 | 1 | Noun/Verb | 0.063 | 0157 |
 
 
 Tf-idf results for comparison:
+
 | k | F1-macro | MRR |
-| :____: | :___: | :___: |
+| :-----: | :-----: | :-----: |
 | 1 | 0.031 | 0.109  |
 | 3 | 0.083 | 0.195 |
 | 5 | 0.095 | 0.209 |
